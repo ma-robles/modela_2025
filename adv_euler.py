@@ -1,6 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.interpolate import interpn
+import time_dif_sch as tds
 
 #Ejercicio campo vectorial circular
 
@@ -27,11 +28,7 @@ n=0
 # Graficando posición con euler
 while n<700:
     plt.plot(xn, yn, '.', color=(1,0,0, 1))
-    up = interpn((x,y), u, (xn,yn) )
-    vp = interpn((x,y), v, (xn,yn) )
-    
-    xn = xn + dt*up
-    yn = yn + dt*vp
+    xn, yn  = tds.euler_fw( x, y, u, v, (xn, yn), dt)
     n += 1
 
 

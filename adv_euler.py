@@ -2,6 +2,9 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.interpolate import interpn
 
+#Ejercicio campo vectorial circular
+
+#creando campo vectorial
 x = np.arange(-2, 2, 0.1)
 y = np.arange(-2, 2, 0.1)
 x1, y1 = np.meshgrid(x,y, indexing='ij')
@@ -11,18 +14,17 @@ tetha = np.arctan2( y1, x1)
 u = -r*np.sin(tetha)
 v = r*np.cos(tetha)
 
-
 dt = 0.01
+# posición inicial
 xn = 0.3
 yn = 1.6
 
-print(x, end='\n'+40*'*')
-print(y, end='\n'+40*'*')
-print(u)
-print(v)
+# Gráfico del campo de velocidades
 plt.figure()
 plt.quiver(x1, y1, u, v )
 n=0
+
+# Graficando posición con euler
 while n<700:
     plt.plot(xn, yn, '.', color=(1,0,0, 1))
     up = interpn((x,y), u, (xn,yn) )

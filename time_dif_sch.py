@@ -21,12 +21,14 @@ def euler_fw( x, y, u, v , p,  dt):
 
 #runge-Kutta second order
 def rk2( x, y, u, v, p, dt):
-    k1x, k1y = euler_fw( x, y, u, v, p, dt)
-    k2x = 3*k1x*dt/4
-    k2y = 3*k1y*dt/4
+    k1x = dt* interpn( (x, y), u, p)
+    k1y = dt* interpn( (x, y), v, p)
+    pt = (p[0] + k1x, p[1] + k1y )
+    k2x = dt* interpn( (x, y), u, pt)
+    k2y = dt* interpn( (x, y), v, pt)
 
-    xn = p[0] + dt* interpn( (x, y), u, (k2x,k2y))
-    yn = p[1] + dt* interpn( (x, y), v, (k2x, k2y))
+    xn = p[0] + (k1x + k2x)/2
+    yn = p[1] + (k1y + k2y)/2
     return (xn, yn)
 
 

@@ -19,26 +19,27 @@ latv = root.variables['XLAT_V'][0,:]
 lonv = root.variables['XLONG_V'][0,:]
 
 # tomando el nivel 5
-U = root.variables['U'][:,5][:]
-V = root.variables['V'][:,5][:]
+level = 5
+U = root.variables['U'][:, level][:]
+V = root.variables['V'][:, level][:]
 
+print('u',U.shape)
+
+t = 5
 # interpolando a malla escalar
-lonlat =  np.stack([ np.ravel(lat) , np.ravel(lon)], axis=1)
-Ut = np.reshape(
-        interpn( (latu.T[0],lonu[0]),
-            U[0],
-            lonlat,
-            ),
-        lat.shape,
-     )
+def inter_esc( UV, latu, lonu, lat, lon, t):
+    lonlat =  np.stack([ np.ravel(lat) , np.ravel(lon)], axis=1)
+    UV_inter= np.reshape(
+            interpn( (latu.T[t],lonu[t]),
+                UV[t],
+                lonlat,
+                ),
+            lat.shape,
+         )
+    return UV_inter
 
-Vt = np.reshape(
-        interpn( (latv.T[0],lonv[0]),
-            V[0],
-            lonlat,
-            ),
-        lat.shape,
-     )
+Ut = inter_esc(U, latu, lonu, lat, lon, t)
+Vt = inter_esc(V, latv, lonv, lat, lon, t)
 
 #coordenadas Popo
 Xpopo = 19.021

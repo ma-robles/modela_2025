@@ -25,12 +25,12 @@ V = root.variables['V'][:, level][:]
 
 print('u',U.shape)
 
-t = 5
+t = 10
 # interpolando a malla escalar
-def inter_esc( UV, latu, lonu, lat, lon, t):
+def inter_esc( UV, latuv, lonuv, lat, lon, t):
     lonlat =  np.stack([ np.ravel(lat) , np.ravel(lon)], axis=1)
     UV_inter= np.reshape(
-            interpn( (latu.T[t],lonu[t]),
+            interpn( (latuv.T[t],lonuv[t]),
                 UV[t],
                 lonlat,
                 ),
@@ -51,27 +51,46 @@ latmax = lat[-1, 0]
 lonmin = lon[0, 0]
 lonmax = lon[0, -1]
 
+plt.ion()
 proj = ccrs.PlateCarree()
-plt.figure()
 ax_lim= [lonmin, lonmax, latmin, latmax]
-ax = plt.axes(projection= proj)
-ax.set_extent(ax_lim, proj)
-#dibuja grid
-ax.gridlines(draw_labels=["top", "right"], dms=True, x_inline=False, y_inline=False)
-#dibuja lineas de costa
-ax.coastlines()
-# graficacion de variable
-var_map = plt.contourf(lon, lat, Ut, transform= proj )
-#color bar
-cbar=plt.colorbar(
-        var_map,
-        #ax=ax,
-        #shrink=0.75,
-        orientation='horizontal',
-        aspect=50,
-        pad=0.02,
-        fraction=0.03,
-        )
-cbar.ax.set_xlabel('Variable')
+fig = plt.figure()
+t=0
+levels = range(0, 60,5)
+while t < U.shape[0]:
+    Ut = inter_esc(U, latu, lonu, lat, lon, t)
+    Vt = inter_esc(V, latv, lonv, lat, lon, t)
+    ax = plt.axes(projection= proj)
+    ax.set_extent(ax_lim, proj)
+    #dibuja grid
+    ax.gridlines(draw_labels=["top", "right"], 
+            dms=True, 
+            x_inline=False, 
+            y_inline=False,
+            )
+    #dibuja lineas de costa
+    ax.coastlines()
+    # graficacion de variable
+    var_map = plt.contourf(lon, lat, np.sqrt(Ut**2+Vt**2),
+           levels,
+           transform= proj,
+           )
 
-plt.savefig('figure_nc.png')
+    #color bar
+    cbar=plt.colorbar(
+           var_map,
+           #ax=ax,
+           #shrink=0.75,
+           orientation='horizontal',
+           aspect=50,
+           pad=0.02,
+           fraction=0.03,
+           )
+    cbar.ax.set_xlabel('tiempo ' + str(t))
+    plt.show()
+    plt.pause(0.2)
+    plt.clf()
+    t+=1
+    
+
+#plt.savefig('figure_nc.png')
